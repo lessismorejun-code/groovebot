@@ -49,6 +49,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);co
 .spinner{width:32px;height:32px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
 .load-text{font-size:13px;color:var(--dm);text-align:center;line-height:1.8;white-space:pre-line}
 .err{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.3);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--rd);word-break:break-all}
+.ok-msg{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--gn)}
 .label{font-size:11px;font-weight:600;color:var(--mt);letter-spacing:1px;margin:20px 0 10px}
 .preview-wrap{background:#fff;border-radius:8px;overflow:hidden;margin:12px 0;max-height:55vh;overflow-y:auto;padding:20px}
 .preview-wrap img{max-width:100%!important;height:auto!important}
@@ -58,8 +59,6 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);co
 .sc-hi{background:rgba(34,197,94,.15);color:var(--gn)}
 .sc-md{background:rgba(59,130,246,.15);color:#3b82f6}
 .howto{font-size:14px;color:var(--tx);line-height:1.8;padding:16px}
-.hist-item{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
-.hist-item:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -68,68 +67,56 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);co
 <script>
 var MODEL="claude-haiku-4-5-20251001";
 var CATS={"website-creation-tips":"\uD648\uD398\uC774\uC9C0 \uC81C\uC791 \uD301","seo-techniques":"SEO \uD14C\uD06C\uB2C9","grooveweb-story":"\uADF8\uB8E8\uBE0C\uC6F9 \uC774\uC57C\uAE30"};
-var EXISTING="\uC0AC\uC774\uD2B8 \uAD6C\uC870 \uC124\uACC4,\uBA54\uD0C0 \uD0DC\uADF8,SEO \uD0A4\uC6CC\uB4DC\uB9AC\uC11C\uCE58,SEO \uCD5C\uC801\uD654 \uAC80\uC0C9 \uB178\uCD9C,\uC790\uB8CC \uC900\uBE44,\uC81C\uC791 \uC5C5\uCCB4 \uC120\uD0DD,\uC81C\uC791 \uAE30\uAC04,\uC81C\uC791 \uBE44\uC6A9,\uC758\uB8B0 \uC9C8\uBB38,\uC0AC\uB0B4\uB514\uC790\uC774\uB108,\uB514\uC790\uC778\uB9CC \uC798\uD558\uB294 \uC5C5\uCCB4,\uC678\uC8FC \uC804 7\uAC00\uC9C0,\uAE30\uD68D \uAC00\uB2A5\uD55C \uC5C5\uCCB4,\uAE30\uAC04 \uB2E8\uCD95,\uD3EC\uD2B8\uD3F4\uB9AC\uC624 \uD655\uC778,\uC544\uC784\uC6F9 \uC6CC\uB4DC\uD504\uB808\uC2A4,\uC2A4\uD0C0\uD2B8\uC5C5 \uD648\uD398\uC774\uC9C0,\uBC18\uC751\uD615 \uC81C\uC791\uC0AC,\uB9AC\uB274\uC5BC \uC2E4\uD328,\uBAA8\uBC14\uC77C \uBB34\uC2DC,B2B \uB9C8\uCF00\uD305,\uBD80\uB3D9\uC0B0 \uD648\uD398\uC774\uC9C0,\uD654\uC7A5\uD488 \uC81C\uC870\uC5C5\uCCB4,\uBC18\uC751\uD615 \uC801\uC751\uD615,\uBAA8\uBC14\uC77C SEO,2025\uB144 \uD2B8\uB80C\uB4DC,SEO \uC758\uB8B0 4\uAC00\uC9C0,\uAE30\uD68D \uAFB8\uD301,\uD648\uD398\uC774\uC9C0 \uBE14\uB85C\uADF8 \uBE44\uAD50,\uC11C\uB4DC\uD30C\uD2F0 \uCFE0\uD0A4,\uC544\uC784\uC6F9 \uC7A5\uC810,\uADF8\uB85C\uC2A4\uD574\uD0B9,\uBC31\uB9C1\uD06C,\uD14C\uD06C\uB2C8\uCEEC SEO,\uB871\uD14C\uC77C \uC20F\uD14C\uC77C,\uC628\uD398\uC774\uC9C0 SEO,\uCCB4\uD06C\uB9AC\uC2A4\uD2B8,\uBE0C\uB79C\uB4DC \uC2A4\uD1A0\uB9AC,\uB9AC\uB274\uC5BC \uC2E0\uD638,\uBE14\uB799\uD587 \uD654\uC774\uD2B8\uD587,\uCEE8\uD150\uCE20 SEO,\uAC80\uC0C9\uC5D4\uC9C4 \uB4F1\uB85D,\uAD6C\uAE00 \uC560\uB110\uB9AC\uD2F1\uC2A4,\uC6F9 \uB514\uC790\uC778 \uD2B8\uB80C\uB4DC";
-var FOOTER='<hr><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/320e151158880.jpg" style="width:100%"><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">\uADF8\uB8E8\uBE0C\uC6F9\uC740 10\uB144 \uC774\uC0C1\uC758 \uACBD\uD5D8\uC744 \uBC14\uD0D5\uC73C\uB85C, \uACE0\uAC1D \uB9DE\uCDA4\uD615 \uC6F9\uC0AC\uC774\uD2B8\uB97C \uC124\uACC4\uD558\uACE0 \uAC1C\uBC1C\uD558\uB294 \uC804\uBB38 \uC6F9\uC0AC\uC774\uD2B8 \uC81C\uC791\uC5C5\uCCB4\uC785\uB2C8\uB2E4.<\/strong> <span style="font-size:16px">\uB514\uC790\uC774\uB108 \uCD9C\uC2E0\uC758 \uC804\uBB38 \uD300\uC774 \uC9C1\uC811 \uC6B4\uC601\uD558\uBA70, \uC544\uC784\uC6F9\uACFC \uC790\uCCB4 \uCF54\uB4DC\uB97C \uD65C\uC6A9\uD55C \uD6A8\uC728\uC801\uC774\uACE0 \uC9C1\uAD00\uC801\uC778 \uC6F9\uC0AC\uC774\uD2B8 \uAD6C\uCD95\uC744 \uC81C\uACF5\uD569\uB2C8\uB2E4.<\/span><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">\uC218\uB9CE\uC740 \uC131\uACF5\uC801\uC778 \uD504\uB85C\uC81D\uD2B8\uB97C \uD1B5\uD574 \uADF8\uB8E8\uBE0C\uC6F9\uC740 \uACE0\uAC1D\uC758 \uACE0\uBBFC\uC744 100% \uC774\uD574\uD558\uACE0, \uADF8 \uC774\uC0C1\uC758 \uD574\uACB0\uCC45\uC744 \uC81C\uC548\uD558\uB294 \uAC83\uC744 \uBAA9\uD45C\uB85C \uD558\uACE0 \uC788\uC2B5\uB2C8\uB2E4.<\/strong><\/p><p style="text-align:center;letter-spacing:0px"><a href="https://www.groove-web.com/contact" target="_blank" style="font-size:16px;background-color:#000;color:#fff;padding:12px 32px;text-decoration:none;display:inline-block;margin:16px 0">\uAC00\uC7A5 \uBE60\uB978 \uC0C1\uB2F4 \uC694\uCCAD\uD558\uAE30 \u2192<\/a><\/p><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/6889c8458b2c3.jpg" style="width:100%"><\/p>';
+var EXISTING="\uC0AC\uC774\uD2B8 \uAD6C\uC870 \uC124\uACC4,\uBA54\uD0C0 \uD0DC\uADF8,SEO \uD0A4\uC6CC\uB4DC,SEO \uCD5C\uC801\uD654,\uC790\uB8CC \uC900\uBE44,\uC5C5\uCCB4 \uC120\uD0DD,\uC81C\uC791 \uAE30\uAC04,\uC81C\uC791 \uBE44\uC6A9,\uC758\uB8B0 \uC9C8\uBB38,\uC0AC\uB0B4\uB514\uC790\uC774\uB108,\uB514\uC790\uC778 \uC5C5\uCCB4,\uC678\uC8FC 7\uAC00\uC9C0,\uAE30\uD68D \uC5C5\uCCB4,\uAE30\uAC04 \uB2E8\uCD95,\uD3EC\uD2B8\uD3F4\uB9AC\uC624,\uC544\uC784\uC6F9 \uC6CC\uB4DC\uD504\uB808\uC2A4,\uC2A4\uD0C0\uD2B8\uC5C5,\uBC18\uC751\uD615 \uC81C\uC791\uC0AC,\uB9AC\uB274\uC5BC \uC2E4\uD328,\uBAA8\uBC14\uC77C,B2B,\uBD80\uB3D9\uC0B0,\uD654\uC7A5\uD488,\uBC18\uC751\uD615 \uC801\uC751\uD615,\uBAA8\uBC14\uC77C SEO,2025 \uD2B8\uB80C\uB4DC,SEO \uC758\uB8B0,\uAE30\uD68D \uAFB8\uD301,\uBE14\uB85C\uADF8 \uBE44\uAD50,\uCFE0\uD0A4,\uC544\uC784\uC6F9 \uC7A5\uC810,\uADF8\uB85C\uC2A4\uD574\uD0B9,\uBC31\uB9C1\uD06C,\uD14C\uD06C\uB2C8\uCEEC SEO,\uB871\uD14C\uC77C,\uC628\uD398\uC774\uC9C0,\uCCB4\uD06C\uB9AC\uC2A4\uD2B8,\uBE0C\uB79C\uB4DC \uC2A4\uD1A0\uB9AC,\uB9AC\uB274\uC5BC \uC2E0\uD638,\uBE14\uB799\uD587,\uCEE8\uD150\uCE20 SEO,\uAC80\uC0C9\uC5D4\uC9C4 \uB4F1\uB85D,\uC560\uB110\uB9AC\uD2F1\uC2A4,\uC6F9 \uB514\uC790\uC778 \uD2B8\uB80C\uB4DC";
+var FOOTER='<hr><p style="text-align:justify"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/320e151158880.jpg" style="width:100%"><\/p><p style="text-align:justify"><strong style="font-size:16px">\uADF8\uB8E8\uBE0C\uC6F9\uC740 10\uB144 \uC774\uC0C1\uC758 \uACBD\uD5D8\uC744 \uBC14\uD0D5\uC73C\uB85C, \uACE0\uAC1D \uB9DE\uCDA4\uD615 \uC6F9\uC0AC\uC774\uD2B8\uB97C \uC124\uACC4\uD558\uACE0 \uAC1C\uBC1C\uD558\uB294 \uC804\uBB38 \uC6F9\uC0AC\uC774\uD2B8 \uC81C\uC791\uC5C5\uCCB4\uC785\uB2C8\uB2E4.<\/strong><\/p><p style="text-align:center"><a href="https://www.groove-web.com/contact" target="_blank" style="font-size:16px;background-color:#000;color:#fff;padding:12px 32px;text-decoration:none;display:inline-block;margin:16px 0">\uAC00\uC7A5 \uBE60\uB978 \uC0C1\uB2F4 \uC694\uCCAD\uD558\uAE30 \u2192<\/a><\/p><p style="text-align:justify"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/6889c8458b2c3.jpg" style="width:100%"><\/p>';
 
-var S={step:"home",candidates:[],selected:null,html:"",title:"",score:0,history:[],error:null,loading:false,loadMsg:""};
+var S={step:"home",candidates:[],selected:null,html:"",title:"",score:0,history:[],error:null,loading:false,loadMsg:"",emailStatus:""};
 try{S.history=JSON.parse(localStorage.getItem("gb-hist")||"[]")}catch(e){}
 
 function callAPI(sys,msg,search){
-  var body={model:MODEL,max_tokens:8192,system:sys,messages:[{role:"user",content:msg}]};
+  var body={model:MODEL,max_tokens:4096,system:sys,messages:[{role:"user",content:msg}]};
   if(search)body.tools=[{type:"web_search_20250305",name:"web_search"}];
   return fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
   .then(function(r){
-    var status=r.status;
     return r.text().then(function(txt){
-      if(!txt||txt.trim()==="")throw new Error("Empty response from API (status "+status+")");
-      var d;
-      try{d=JSON.parse(txt)}catch(e){throw new Error("API returned non-JSON (status "+status+"): "+txt.substring(0,200))}
-      if(status<200||status>=300){throw new Error(d.error&&d.error.message||d.error||"API Error "+status)}
+      if(!txt)throw new Error("Empty response ("+r.status+")");
+      var d;try{d=JSON.parse(txt)}catch(e){throw new Error("Non-JSON ("+r.status+"): "+txt.substring(0,150))}
+      if(r.status>=300)throw new Error(d.error&&d.error.message||d.error||"Error "+r.status);
       return d.content.filter(function(b){return b.type==="text"}).map(function(b){return b.text}).join("\n").trim();
     });
   });
 }
 
-function doResearch(){
-  S.loading=true;S.loadMsg="\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \uC911...\nSearch Engine Journal, Moz, Ahrefs \uB4F1\n10\uAC1C \uC774\uC0C1 \uC18C\uC2A4 \uBD84\uC11D (1-2\uBD84)";S.error=null;render();
-  var sys="You are a senior SEO/UIUX content researcher for a Korean web agency. Search the web for the latest overseas SEO, UIUX, web development articles published in the past 7 to 30 days. Sources to check: Search Engine Journal, Moz Blog, Ahrefs Blog, Semrush Blog, Google Search Central Blog, Smashing Magazine, Nielsen Norman Group, Web.dev, and X/Twitter SEO discussions. Select the 5 best article topics that would make excellent columns for a Korean web agency blog. Each candidate must NOT overlap with these existing topics: "+EXISTING+". Each must map to one of these categories: website-creation-tips, seo-techniques, or grooveweb-story. Each must be relevant to Korean small business owners and marketing managers. Each must have enough substance for a 2000+ word article. Respond ONLY with a JSON object, no markdown backticks, no explanation. Format: {\"candidates\":[{\"rank\":1,\"score\":92,\"title_ko\":\"Korean title\",\"source\":\"Source Name\",\"category\":\"seo-techniques\",\"angle_ko\":\"2-3 sentence angle in Korean\",\"key_data_points\":[\"point1\",\"point2\",\"point3\"],\"why_now\":\"Why this topic matters now\"}]}";
-  callAPI(sys,"Search for the latest SEO, UIUX, and web development articles. Select the 5 best candidates for a Korean web agency column. Return JSON only.",true)
-  .then(function(r){
-    var c=r.replace(/```json|```/g,"").trim();
-    var si=c.indexOf("{"),ei=c.lastIndexOf("}")+1;
-    if(si<0||ei<=si)throw new Error("No JSON found in response: "+c.substring(0,200));
-    var p=JSON.parse(c.slice(si,ei));
-    S.candidates=p.candidates||[];
-    if(S.candidates.length===0)throw new Error("No candidates returned");
-    S.step="pick";
+function sendEmail(title,html){
+  return fetch("/api/send-email",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({title:title,html:html})
   })
+  .then(function(r){return r.json()})
+  .then(function(d){
+    if(d.ok)return{ok:true,msg:"\uC774\uBA54\uC77C \uBC1C\uC1A1 \uC644\uB8CC!"};
+    else return{ok:false,msg:d.error||"\uC774\uBA54\uC77C \uBC1C\uC1A1 \uC2E4\uD328"};
+  })
+  .catch(function(e){return{ok:false,msg:e.message}});
+}
+
+function doResearch(){
+  S.loading=true;S.loadMsg="\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \uC911...\n10\uAC1C \uC774\uC0C1 \uC18C\uC2A4 \uBD84\uC11D (1-2\uBD84)";S.error=null;S.emailStatus="";render();
+  var sys="You are a senior SEO/UIUX content researcher for a Korean web agency. Search the web for the latest overseas SEO, UIUX, web development articles published in the past 7 to 30 days. Select the 5 best topics for a Korean web agency blog column. NOT overlap: "+EXISTING+". Map to: website-creation-tips, seo-techniques, or grooveweb-story. Respond ONLY JSON: {\"candidates\":[{\"rank\":1,\"score\":92,\"title_ko\":\"title\",\"source\":\"Source\",\"category\":\"seo-techniques\",\"angle_ko\":\"angle\",\"key_data_points\":[\"p1\"],\"why_now\":\"reason\"}]}";
+  callAPI(sys,"Find 5 best SEO/UIUX article topics. JSON only.",true)
+  .then(function(r){var c=r.replace(/```json|```/g,"").trim();var p=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));S.candidates=p.candidates||[];S.step="pick"})
   .catch(function(e){S.error=e.message})
   .finally(function(){S.loading=false;render()});
 }
 
 function doGenerate(idx){
   var topic=S.candidates[idx];S.selected=topic;S.loading=true;
-  S.loadMsg="\uADF8\uB8E8\uBE0C\uC6F9 \uD1A4\uC73C\uB85C \uCE7C\uB7FC \uC791\uC131 \uC911...\n\uB3C4\uC785\uBD80 \u2192 \uC778\uC6A9\uAD6C 3\uC904 \u2192 \uBC18\uC804 \u2192 \uBCF8\uB860 \u2192 \uBE44\uAD50\uD45C \u2192 \uACB0\uB860\n(1-3\uBD84 \uC18C\uC694)";S.error=null;render();
-  var ws="You are a senior content writer for a Korean web agency called GrooveWeb. Write a column article using these exact markers:\n[TITLE] Column title in Korean\n[INTRO] Opening paragraph that addresses reader misconceptions\n[QUOTE1] Common misconception quote 1\n[QUOTE2] Common misconception quote 2\n[QUOTE3] Common misconception quote 3\n[TURN] Turning point paragraph\n[SECTION] Section heading\n[BODY] Section body text\n(repeat SECTION and BODY 3-4 times)\n[TABLE_START]\n[TABLE_HEADER] Label|Column1|Column2\n[TABLE_ROW] Row1|Cell1|Cell2\n[TABLE_ROW] Row2|Cell1|Cell2\n[TABLE_ROW] Row3|Cell1|Cell2\n[TABLE_END]\n[CONCLUSION] Conclusion paragraph\n[END]\n\nRules: Write in formal Korean (합니다/습니다 style). No emojis ever. 2000-3500 characters. Use the pattern ~라는 점입니다 for endings. Include a GrooveWeb case study: 실제로 그루브웹에 ~를 요청했던 한 기업의 홈페이지를 보면. Do NOT generate a footer or company introduction block.";
-  callAPI(ws,"Topic: "+topic.title_ko+"\nAngle: "+topic.angle_ko+"\nCategory: "+topic.category+"\nKey data: "+JSON.stringify(topic.key_data_points)+"\n\nWrite the column using the marker format. You may use web_search for additional data.",true)
+  S.loadMsg="\uADF8\uB8E8\uBE0C\uC6F9 \uD1A4\uC73C\uB85C \uCE7C\uB7FC \uC791\uC131 \uC911...\n(1-3\uBD84 \uC18C\uC694)";S.error=null;S.emailStatus="";render();
+  var ws="You are a senior writer for GrooveWeb. Write ONLY in Korean. Use markers: [TITLE] [INTRO] [QUOTE1] [QUOTE2] [QUOTE3] [TURN] [SECTION] [BODY] (3-4x) [TABLE_START] [TABLE_HEADER] [TABLE_ROW] [TABLE_END] [CONCLUSION] [END]. Style: formal Korean, no emojis, 2000-3500 chars. No footer.";
+  callAPI(ws,"Topic:"+topic.title_ko+" Angle:"+topic.angle_ko+" Data:"+JSON.stringify(topic.key_data_points)+"\nWrite Korean column with markers.",true)
   .then(function(draft){
-    S.loadMsg="\uC5D0\uB514\uD130 \uAC80\uC218 \uC911...";render();
-    return callAPI("You are an editor. Review this Korean column draft. Check: formal Korean style, no emojis, proper structure, 2000-3500 chars. Respond ONLY with JSON, no backticks: {\"score\":85,\"revised_draft\":\"full revised text with markers\"}","Draft:\n"+draft,false)
-    .then(function(er){
-      var sc=82;
-      try{
-        var ec=er.replace(/```json|```/g,"").trim();
-        var ep=JSON.parse(ec.slice(ec.indexOf("{"),ec.lastIndexOf("}")+1));
-        if(ep.revised_draft&&ep.revised_draft.length>500)draft=ep.revised_draft;
-        sc=ep.score||82;
-      }catch(e){}
-      return{draft:draft,score:sc};
-    })
-    .catch(function(){return{draft:draft,score:80}});
-  })
-  .then(function(result){
-    var res=toHtml(result.draft);
-    S.html=res.html;S.title=res.title||topic.title_ko;S.score=result.score;S.step="preview";
+    var res=toHtml(draft);S.html=res.html;S.title=res.title||topic.title_ko;S.score=82;S.step="preview";
   })
   .catch(function(e){S.error=e.message})
   .finally(function(){S.loading=false;render()});
@@ -141,7 +128,7 @@ function toHtml(raw){
   var hs='style="font-size:24px;letter-spacing:-1px;line-height:1.4"';
   for(var i=0;i<lines.length;i++){var l=lines[i].trim();if(!l)continue;
     if(l.startsWith("[TABLE_START]")){inT=true;tH=[];tR=[];continue}
-    if(l.startsWith("[TABLE_END]")){inT=false;var t='<table style="width:100%;border-collapse:collapse;margin:20px 0"><tr>';for(var hi=0;hi<tH.length;hi++){t+='<th style="background-color:rgb(204,204,204);padding:10px 12px;font-size:14px;font-weight:bold;text-align:center;border:1px solid #ddd">'+tH[hi]+'</th>'}t+='</tr>';for(var ri=0;ri<tR.length;ri++){t+='<tr>';for(var ci=0;ci<tR[ri].length;ci++){t+='<td style="padding:10px 12px;font-size:14px;text-align:left;border:1px solid #ddd">'+(ci===0?'<strong>'+tR[ri][ci]+'</strong>':tR[ri][ci])+'</td>'}t+='</tr>'}t+='</table>';parts.push(t);continue}
+    if(l.startsWith("[TABLE_END]")){inT=false;var t='<table style="width:100%;border-collapse:collapse;margin:20px 0"><tr>';for(var a=0;a<tH.length;a++)t+='<th style="background:rgb(204,204,204);padding:10px 12px;font-size:14px;font-weight:bold;text-align:center;border:1px solid #ddd">'+tH[a]+'</th>';t+='</tr>';for(var b=0;b<tR.length;b++){t+='<tr>';for(var c=0;c<tR[b].length;c++)t+='<td style="padding:10px 12px;font-size:14px;border:1px solid #ddd">'+(c===0?'<strong>'+tR[b][c]+'</strong>':tR[b][c])+'</td>';t+='</tr>'}t+='</table>';parts.push(t);continue}
     if(inT){if(l.indexOf("[TABLE_HEADER]")===0)tH=l.replace("[TABLE_HEADER]","").trim().split("|").map(function(s){return s.trim()});else if(l.indexOf("[TABLE_ROW]")===0)tR.push(l.replace("[TABLE_ROW]","").trim().split("|").map(function(s){return s.trim()}));continue}
     if(l.indexOf("[TITLE]")===0){title=l.replace("[TITLE]","").trim();continue}
     if(l.indexOf("[INTRO]")===0)parts.push('<p '+ps+'><strong style="font-size:16px">'+l.replace("[INTRO]","").trim()+'</strong></p>');
@@ -149,24 +136,28 @@ function toHtml(raw){
     else if(l.indexOf("[TURN]")===0)parts.push('<p '+ps+'>'+l.replace("[TURN]","").trim()+'</p>');
     else if(l.indexOf("[SECTION]")===0){parts.push("<hr>");parts.push('<p '+hs+'><strong>'+l.replace("[SECTION]","").trim()+'</strong></p>')}
     else if(l.indexOf("[BODY]")===0)parts.push('<p '+ps+'>'+l.replace("[BODY]","").trim()+'</p>');
-    else if(l.indexOf("[CONCLUSION]")===0){parts.push("<hr>");var ct=l.replace("[CONCLUSION]","").trim();parts.push('<p '+hs+'><strong>'+(ct.indexOf("\uACB0\uB860")===0?"":"\uACB0\uB860 : ")+title+'</strong></p>');var b=ct.replace(/^\uACB0\uB860\s*[:\uFF1A]\s*/,"").trim();if(b)parts.push('<p '+ps+'>'+b+'</p>')}
+    else if(l.indexOf("[CONCLUSION]")===0){parts.push("<hr>");parts.push('<p '+hs+'><strong>\uACB0\uB860 : '+(title||"")+'</strong></p>');var ct=l.replace("[CONCLUSION]","").replace(/^\uACB0\uB860\s*[:\uFF1A]\s*/,"").trim();if(ct)parts.push('<p '+ps+'>'+ct+'</p>')}
     else if(l.indexOf("[END]")===0)break;
     else if(l.length>0&&l.indexOf("[")!==0)parts.push('<p '+ps+'>'+l+'</p>')}
-  return{html:'<p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/73eb2fe2bb412.jpg" style="width:100%"></p>\n'+parts.join("\n")+"\n"+FOOTER,title:title}
+  return{html:'<p style="text-align:justify"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/73eb2fe2bb412.jpg" style="width:100%"></p>\n'+parts.join("\n")+"\n"+FOOTER,title:title}
 }
 
 function dl(type){
   var d=new Date().toISOString().slice(0,10).replace(/-/g,"");
-  var c=type==="imweb"?S.html:'<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>'+S.title+'</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#f5f5f5}.w{max-width:720px;margin:24px auto;padding:40px;background:#fff}img{max-width:100%;height:auto}hr{border:none;border-top:1px solid #e5e5e5;margin:28px 0}p{margin-bottom:16px}</style></head><body><div class="w">'+S.html+'</div></body></html>';
-  var b=new Blob([c],{type:"text/html;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");
+  var content=type==="imweb"?S.html:'<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>'+S.title+'</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#f5f5f5}.w{max-width:720px;margin:24px auto;padding:40px;background:#fff}img{max-width:100%;height:auto}hr{border:none;border-top:1px solid #e5e5e5;margin:28px 0}p{margin-bottom:16px}</style></head><body><div class="w">'+S.html+'</div></body></html>';
+  var blob=new Blob([content],{type:"text/html;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=u;a.download=type==="imweb"?d+"_grooveweb_imweb.html":d+"_grooveweb_preview.html";a.click();URL.revokeObjectURL(u)
 }
 
 function approve(){
-  S.history.unshift({title:S.title,category:S.selected?S.selected.category:"",date:new Date().toISOString()});
-  try{localStorage.setItem("gb-hist",JSON.stringify(S.history))}catch(e){}
-dl("imweb");fetch("/api/send-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:S.title,html:S.html})}).then(function(r){return r.json()}).then(function(d){if(d.ok)alert("이메일 발송 완료!")}).catch(function(){});S.step="done";render()
-
+  S.loading=true;S.loadMsg="\uC2B9\uC778 \uCC98\uB9AC \uC911...\nHTML \uB2E4\uC6B4\uB85C\uB4DC + \uC774\uBA54\uC77C \uBC1C\uC1A1 \uC911...";render();
+  dl("imweb");
+  sendEmail(S.title,S.html).then(function(result){
+    S.history.unshift({title:S.title,category:S.selected?S.selected.category:"",date:new Date().toISOString()});
+    try{localStorage.setItem("gb-hist",JSON.stringify(S.history))}catch(e){}
+    S.emailStatus=result.ok?"\u2705 "+result.msg:"\u274C "+result.msg;
+    S.step="done";S.loading=false;render();
+  });
 }
 
 function render(){
@@ -176,11 +167,12 @@ function render(){
   var h="";
   if(S.error)h+='<div class="err">'+S.error+'<br><button onclick="S.error=null;render()" style="margin-top:8px;background:none;border:1px solid var(--rd);color:var(--rd);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px">\uB2EB\uAE30</button></div>';
   if(S.loading){h+='<div class="loading"><div class="spinner"></div><div class="load-text">'+S.loadMsg+'</div></div>';$.innerHTML=h;return}
+
   if(S.step==="home"){
-    h+='<div class="banner"><div class="icon">\u26A1</div><div class="title">GrooveBot</div><div class="sub">\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \u2192<br>\uADF8\uB8E8\uBE0C\uC6F9 \uCE7C\uB7FC \uC790\uB3D9 \uC0DD\uC131 \u2192 HTML \uB2E4\uC6B4\uB85C\uB4DC</div></div>';
+    h+='<div class="banner"><div class="icon">\u26A1</div><div class="title">GrooveBot</div><div class="sub">\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \u2192 \uCE7C\uB7FC \uC0DD\uC131 \u2192 \uC774\uBA54\uC77C \uBC1C\uC1A1</div></div>';
     h+='<button class="btn btn-p" onclick="doResearch()">\uB9AC\uC11C\uCE58 \uC2DC\uC791</button>';
     if(S.history.length){h+='<div class="label">\uCD5C\uADFC \uBC1C\uD589 ('+S.history.length+'\uAC74)</div><div class="card">';
-      S.history.slice(0,5).forEach(function(x){h+='<div class="hist-item"><span style="font-size:13px;font-weight:500;flex:1;margin-right:12px">'+x.title+'</span><span style="font-size:11px;color:var(--mt);font-family:monospace">'+(x.date||"").slice(0,10)+'</span></div>'});h+='</div>'}
+      S.history.slice(0,5).forEach(function(x){h+='<div style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:500;flex:1;margin-right:12px">'+x.title+'</span><span style="font-size:11px;color:var(--mt);font-family:monospace">'+(x.date||"").slice(0,10)+'</span></div>'});h+='</div>'}
   }
   else if(S.step==="pick"){
     h+='<div class="label">\uCE7C\uB7FC \uD6C4\uBCF4 '+S.candidates.length+'\uAC1C</div>';
@@ -195,17 +187,20 @@ function render(){
   else if(S.step==="preview"){
     h+='<div class="label">\uCE7C\uB7FC \uC2DC\uC548</div><div class="card"><div class="card-body" style="padding-top:16px"><div class="card-title" style="font-size:17px">'+S.title+'</div>';
     h+='<div class="tags"><span class="tag cat">'+(CATS[S.selected?S.selected.category:""]||"")+'</span>';
-    h+='<span class="sc-badge '+(S.score>=85?"sc-hi":"sc-md")+'">\uAC80\uC218 '+S.score+'\uC810</span></div></div></div>';
+    h+='<span class="sc-badge sc-md">\uAC80\uC218 '+S.score+'\uC810</span></div></div></div>';
     h+='<div class="preview-wrap">'+S.html+'</div>';
     h+='<div class="bottom"><div class="btn-grp"><button class="btn btn-d" onclick="S.step=\'pick\';S.html=\'\';S.title=\'\';render()">\uBC18\uB824</button>';
-    h+='<button class="btn btn-p" onclick="approve()">\uC2B9\uC778 \xB7 \uB2E4\uC6B4\uB85C\uB4DC</button></div>';
-    h+='<button class="btn btn-g" onclick="dl(\'preview\')" style="margin-top:8px;padding:10px;font-size:12px">\uBBF8\uB9AC\uBCF4\uAE30 HTML \uB2E4\uC6B4\uB85C\uB4DC</button></div>'
+    h+='<button class="btn btn-p" onclick="approve()">\uC2B9\uC778 \xB7 \uBC1C\uC1A1</button></div></div>'
   }
   else if(S.step==="done"){
-    h+='<div class="banner ok"><div class="icon">\u2705</div><div class="title">\uBC1C\uD589 \uC644\uB8CC</div><div class="sub">\uC544\uC784\uC6F9 HTML\uC774 \uB2E4\uC6B4\uB85C\uB4DC\uB418\uC5C8\uC2B5\uB2C8\uB2E4</div></div>';
-    h+='<div class="card"><div class="howto"><strong style="font-size:13px;color:var(--dm)">\uC544\uC784\uC6F9 \uC801\uC6A9\uBC95</strong><br><br>1. \uB2E4\uC6B4\uB85C\uB4DC\uB41C HTML \uD30C\uC77C\uC744 \uBA54\uBAA8\uC7A5\uC73C\uB85C \uC5F4\uAE30<br>2. \uC804\uCCB4 \uC120\uD0DD (Ctrl+A) \u2192 \uBCF5\uC0AC (Ctrl+C)<br>3. \uC544\uC784\uC6F9 \u2192 \uCE7C\uB7FC \uAE00\uC4F0\uAE30 \u2192 \uC18C\uC2A4 \uBC84\uD2BC<br>4. \uBD99\uC5EC\uB123\uAE30 \u2192 \uC800\uC7A5</div></div>';
+    h+='<div class="banner ok"><div class="icon">\u2705</div><div class="title">\uBC1C\uD589 \uC644\uB8CC</div><div class="sub">HTML \uB2E4\uC6B4\uB85C\uB4DC \uC644\uB8CC</div></div>';
+    if(S.emailStatus){
+      if(S.emailStatus.indexOf("\u2705")===0)h+='<div class="ok-msg">'+S.emailStatus+'</div>';
+      else h+='<div class="err">'+S.emailStatus+'</div>';
+    }
+    h+='<div class="card"><div class="howto"><strong style="font-size:13px;color:var(--dm)">\uC544\uC784\uC6F9 \uC801\uC6A9\uBC95</strong><br><br>1. \uB2E4\uC6B4\uB85C\uB4DC\uB41C HTML \u2192 \uBA54\uBAA8\uC7A5\uC73C\uB85C \uC5F4\uAE30<br>2. Ctrl+A \u2192 Ctrl+C<br>3. \uC544\uC784\uC6F9 \u2192 \uAE00\uC4F0\uAE30 \u2192 \uC18C\uC2A4 \uBC84\uD2BC<br>4. Ctrl+V \u2192 \uC800\uC7A5</div></div>';
     h+='<div class="btn-grp" style="margin-top:12px"><button class="btn btn-g" onclick="dl(\'imweb\')">\uB2E4\uC2DC \uB2E4\uC6B4\uB85C\uB4DC</button>';
-    h+='<button class="btn btn-p" onclick="S.step=\'home\';S.candidates=[];S.html=\'\';S.title=\'\';S.selected=null;render()">\uC0C8 \uCE7C\uB7FC \uC2DC\uC791</button></div>'
+    h+='<button class="btn btn-p" onclick="S.step=\'home\';S.candidates=[];S.html=\'\';S.title=\'\';S.selected=null;S.emailStatus=\'\';render()">\uC0C8 \uCE7C\uB7FC \uC2DC\uC791</button></div>'
   }
   $.innerHTML=h
 }
