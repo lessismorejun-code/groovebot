@@ -48,7 +48,7 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);co
 .loading{display:flex;flex-direction:column;align-items:center;padding:40px 0;gap:16px}
 .spinner{width:32px;height:32px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
 .load-text{font-size:13px;color:var(--dm);text-align:center;line-height:1.8;white-space:pre-line}
-.err{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.3);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--rd)}
+.err{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.3);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--rd);word-break:break-all}
 .label{font-size:11px;font-weight:600;color:var(--mt);letter-spacing:1px;margin:20px 0 10px}
 .preview-wrap{background:#fff;border-radius:8px;overflow:hidden;margin:12px 0;max-height:55vh;overflow-y:auto;padding:20px}
 .preview-wrap img{max-width:100%!important;height:auto!important}
@@ -66,50 +66,73 @@ body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);co
 <div class="hdr"><div class="hdr-brand"><div class="dot" id="dot"></div><h1>Groove<em>Bot</em></h1></div><div class="badge" id="statusBadge">IDLE</div></div>
 <div class="main" id="app"></div>
 <script>
-const MODEL="claude-sonnet-4-20250514";
-const CATS={"website-creation-tips":"홈페이지 제작 팁","seo-techniques":"SEO 테크닉","grooveweb-story":"그루브웹 이야기"};
-const EXISTING="사이트 구조 설계,메타 태그,SEO 키워드리서치,SEO 최적화 검색 노출,자료 준비,제작 업체 선택,제작 기간,제작 비용,의뢰 질문,사내디자이너,디자인만 잘하는 업체,외주 전 7가지,기획 가능한 업체,기간 단축,포트폴리오 확인,아임웹 워드프레스,스타트업 홈페이지,반응형 제작사,리뉴얼 실패,모바일 무시,B2B 마케팅,부동산 홈페이지,화장품 제조업체,반응형 적응형,모바일 SEO,2025년 트렌드,SEO 의뢰 4가지,기획 꿀팁,홈페이지 블로그 비교,서드파티 쿠키,아임웹 장점,그로스해킹,백링크,테크니컬 SEO,롱테일 숏테일,온페이지 SEO,체크리스트,브랜드 스토리,리뉴얼 신호,블랙햇 화이트햇,컨텐츠 SEO,검색엔진 등록,구글 애널리틱스,웹 디자인 트렌드";
-const FOOTER='<hr><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/320e151158880.jpg" style="width:100%"><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">그루브웹은 10년 이상의 경험을 바탕으로, 고객 맞춤형 웹사이트를 설계하고 개발하는 전문 웹사이트 제작업체입니다.<\/strong> <span style="font-size:16px">디자이너 출신의 전문 팀이 직접 운영하며, 아임웹과 자체 코드를 활용한 효율적이고 직관적인 웹사이트 구축을 제공합니다.<\/span><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">수많은 성공적인 프로젝트를 통해 그루브웹은 고객의 고민을 100% 이해하고, 그 이상의 해결책을 제안하는 것을 목표로 하고 있습니다.<\/strong> <span style="font-size:16px">고객의 비즈니스 성장과 성공을 위해 항상 최선을 다하는 그루브웹은 각 분야에 맞는 맞춤형 솔루션을 제공합니다.<\/span><\/p><p style="text-align:justify;letter-spacing:0px"><span style="font-size:16px">웹사이트 제작에 대해 궁금한 점이 있으신가요? 아래 연락처로 문의해 주시면, 신속하게 상담을 진행해 드리겠습니다.<\/span><\/p><p style="text-align:center;letter-spacing:0px"><a href="https://www.groove-web.com/contact" target="_blank" style="font-size:16px;background-color:#000;color:#fff;padding:12px 32px;text-decoration:none;display:inline-block;margin:16px 0">가장 빠른 상담 요청하기 \u2192<\/a><\/p><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/6889c8458b2c3.jpg" style="width:100%"><\/p>';
+var MODEL="claude-sonnet-4-20250514";
+var CATS={"website-creation-tips":"\uD648\uD398\uC774\uC9C0 \uC81C\uC791 \uD301","seo-techniques":"SEO \uD14C\uD06C\uB2C9","grooveweb-story":"\uADF8\uB8E8\uBE0C\uC6F9 \uC774\uC57C\uAE30"};
+var EXISTING="\uC0AC\uC774\uD2B8 \uAD6C\uC870 \uC124\uACC4,\uBA54\uD0C0 \uD0DC\uADF8,SEO \uD0A4\uC6CC\uB4DC\uB9AC\uC11C\uCE58,SEO \uCD5C\uC801\uD654 \uAC80\uC0C9 \uB178\uCD9C,\uC790\uB8CC \uC900\uBE44,\uC81C\uC791 \uC5C5\uCCB4 \uC120\uD0DD,\uC81C\uC791 \uAE30\uAC04,\uC81C\uC791 \uBE44\uC6A9,\uC758\uB8B0 \uC9C8\uBB38,\uC0AC\uB0B4\uB514\uC790\uC774\uB108,\uB514\uC790\uC778\uB9CC \uC798\uD558\uB294 \uC5C5\uCCB4,\uC678\uC8FC \uC804 7\uAC00\uC9C0,\uAE30\uD68D \uAC00\uB2A5\uD55C \uC5C5\uCCB4,\uAE30\uAC04 \uB2E8\uCD95,\uD3EC\uD2B8\uD3F4\uB9AC\uC624 \uD655\uC778,\uC544\uC784\uC6F9 \uC6CC\uB4DC\uD504\uB808\uC2A4,\uC2A4\uD0C0\uD2B8\uC5C5 \uD648\uD398\uC774\uC9C0,\uBC18\uC751\uD615 \uC81C\uC791\uC0AC,\uB9AC\uB274\uC5BC \uC2E4\uD328,\uBAA8\uBC14\uC77C \uBB34\uC2DC,B2B \uB9C8\uCF00\uD305,\uBD80\uB3D9\uC0B0 \uD648\uD398\uC774\uC9C0,\uD654\uC7A5\uD488 \uC81C\uC870\uC5C5\uCCB4,\uBC18\uC751\uD615 \uC801\uC751\uD615,\uBAA8\uBC14\uC77C SEO,2025\uB144 \uD2B8\uB80C\uB4DC,SEO \uC758\uB8B0 4\uAC00\uC9C0,\uAE30\uD68D \uAFB8\uD301,\uD648\uD398\uC774\uC9C0 \uBE14\uB85C\uADF8 \uBE44\uAD50,\uC11C\uB4DC\uD30C\uD2F0 \uCFE0\uD0A4,\uC544\uC784\uC6F9 \uC7A5\uC810,\uADF8\uB85C\uC2A4\uD574\uD0B9,\uBC31\uB9C1\uD06C,\uD14C\uD06C\uB2C8\uCEEC SEO,\uB871\uD14C\uC77C \uC20F\uD14C\uC77C,\uC628\uD398\uC774\uC9C0 SEO,\uCCB4\uD06C\uB9AC\uC2A4\uD2B8,\uBE0C\uB79C\uB4DC \uC2A4\uD1A0\uB9AC,\uB9AC\uB274\uC5BC \uC2E0\uD638,\uBE14\uB799\uD587 \uD654\uC774\uD2B8\uD587,\uCEE8\uD150\uCE20 SEO,\uAC80\uC0C9\uC5D4\uC9C4 \uB4F1\uB85D,\uAD6C\uAE00 \uC560\uB110\uB9AC\uD2F1\uC2A4,\uC6F9 \uB514\uC790\uC778 \uD2B8\uB80C\uB4DC";
+var FOOTER='<hr><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/320e151158880.jpg" style="width:100%"><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">\uADF8\uB8E8\uBE0C\uC6F9\uC740 10\uB144 \uC774\uC0C1\uC758 \uACBD\uD5D8\uC744 \uBC14\uD0D5\uC73C\uB85C, \uACE0\uAC1D \uB9DE\uCDA4\uD615 \uC6F9\uC0AC\uC774\uD2B8\uB97C \uC124\uACC4\uD558\uACE0 \uAC1C\uBC1C\uD558\uB294 \uC804\uBB38 \uC6F9\uC0AC\uC774\uD2B8 \uC81C\uC791\uC5C5\uCCB4\uC785\uB2C8\uB2E4.<\/strong> <span style="font-size:16px">\uB514\uC790\uC774\uB108 \uCD9C\uC2E0\uC758 \uC804\uBB38 \uD300\uC774 \uC9C1\uC811 \uC6B4\uC601\uD558\uBA70, \uC544\uC784\uC6F9\uACFC \uC790\uCCB4 \uCF54\uB4DC\uB97C \uD65C\uC6A9\uD55C \uD6A8\uC728\uC801\uC774\uACE0 \uC9C1\uAD00\uC801\uC778 \uC6F9\uC0AC\uC774\uD2B8 \uAD6C\uCD95\uC744 \uC81C\uACF5\uD569\uB2C8\uB2E4.<\/span><\/p><p style="text-align:justify;letter-spacing:0px"><strong style="font-size:16px">\uC218\uB9CE\uC740 \uC131\uACF5\uC801\uC778 \uD504\uB85C\uC81D\uD2B8\uB97C \uD1B5\uD574 \uADF8\uB8E8\uBE0C\uC6F9\uC740 \uACE0\uAC1D\uC758 \uACE0\uBBFC\uC744 100% \uC774\uD574\uD558\uACE0, \uADF8 \uC774\uC0C1\uC758 \uD574\uACB0\uCC45\uC744 \uC81C\uC548\uD558\uB294 \uAC83\uC744 \uBAA9\uD45C\uB85C \uD558\uACE0 \uC788\uC2B5\uB2C8\uB2E4.<\/strong><\/p><p style="text-align:center;letter-spacing:0px"><a href="https://www.groove-web.com/contact" target="_blank" style="font-size:16px;background-color:#000;color:#fff;padding:12px 32px;text-decoration:none;display:inline-block;margin:16px 0">\uAC00\uC7A5 \uBE60\uB978 \uC0C1\uB2F4 \uC694\uCCAD\uD558\uAE30 \u2192<\/a><\/p><p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/6889c8458b2c3.jpg" style="width:100%"><\/p>';
 
 var S={step:"home",candidates:[],selected:null,html:"",title:"",score:0,history:[],error:null,loading:false,loadMsg:""};
 try{S.history=JSON.parse(localStorage.getItem("gb-hist")||"[]")}catch(e){}
 
-async function callAPI(sys,msg,search){
+function callAPI(sys,msg,search){
   var body={model:MODEL,max_tokens:8192,system:sys,messages:[{role:"user",content:msg}]};
   if(search)body.tools=[{type:"web_search_20250305",name:"web_search"}];
-  var r=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  var d=await r.json();
-  if(!r.ok)throw new Error(d&&d.error&&d.error.message||d&&d.error||"API Error "+r.status);
-  return d.content.filter(function(b){return b.type==="text"}).map(function(b){return b.text}).join("\n").trim();
+  return fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+  .then(function(r){
+    var status=r.status;
+    return r.text().then(function(txt){
+      if(!txt||txt.trim()==="")throw new Error("Empty response from API (status "+status+")");
+      var d;
+      try{d=JSON.parse(txt)}catch(e){throw new Error("API returned non-JSON (status "+status+"): "+txt.substring(0,200))}
+      if(status<200||status>=300){throw new Error(d.error&&d.error.message||d.error||"API Error "+status)}
+      return d.content.filter(function(b){return b.type==="text"}).map(function(b){return b.text}).join("\n").trim();
+    });
+  });
 }
 
-async function doResearch(){
-  S.loading=true;S.loadMsg="해외 SEO/UIUX 소스 스캔 중...\nSearch Engine Journal, Moz, Ahrefs 등\n10개 이상 소스 분석 (1-2분)";S.error=null;render();
-  try{
-    var sys="You are a senior SEO/UIUX content researcher for 그루브웹. Search web for latest overseas SEO, UIUX, web dev articles (past 7-30 days). Sources: Search Engine Journal, Moz, Ahrefs, Semrush, Google Search Central, Smashing Magazine, NNGroup, Web.dev, X SEO community. Select 5 best for Korean column. NOT overlap: "+EXISTING+". Map to website-creation-tips/seo-techniques/grooveweb-story. For Korean SMB owners. 2000+ words possible. Respond ONLY JSON no backticks: {\"candidates\":[{\"rank\":1,\"score\":92,\"title_ko\":\"제목\",\"source\":\"Source\",\"category\":\"seo-techniques\",\"angle_ko\":\"앵글\",\"key_data_points\":[\"p1\",\"p2\"],\"why_now\":\"이유\"}]}";
-    var r=await callAPI(sys,"Search latest SEO/UIUX articles, select 5 best candidates. JSON only.",true);
+function doResearch(){
+  S.loading=true;S.loadMsg="\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \uC911...\nSearch Engine Journal, Moz, Ahrefs \uB4F1\n10\uAC1C \uC774\uC0C1 \uC18C\uC2A4 \uBD84\uC11D (1-2\uBD84)";S.error=null;render();
+  var sys="You are a senior SEO/UIUX content researcher for a Korean web agency. Search the web for the latest overseas SEO, UIUX, web development articles published in the past 7 to 30 days. Sources to check: Search Engine Journal, Moz Blog, Ahrefs Blog, Semrush Blog, Google Search Central Blog, Smashing Magazine, Nielsen Norman Group, Web.dev, and X/Twitter SEO discussions. Select the 5 best article topics that would make excellent columns for a Korean web agency blog. Each candidate must NOT overlap with these existing topics: "+EXISTING+". Each must map to one of these categories: website-creation-tips, seo-techniques, or grooveweb-story. Each must be relevant to Korean small business owners and marketing managers. Each must have enough substance for a 2000+ word article. Respond ONLY with a JSON object, no markdown backticks, no explanation. Format: {\"candidates\":[{\"rank\":1,\"score\":92,\"title_ko\":\"Korean title\",\"source\":\"Source Name\",\"category\":\"seo-techniques\",\"angle_ko\":\"2-3 sentence angle in Korean\",\"key_data_points\":[\"point1\",\"point2\",\"point3\"],\"why_now\":\"Why this topic matters now\"}]}";
+  callAPI(sys,"Search for the latest SEO, UIUX, and web development articles. Select the 5 best candidates for a Korean web agency column. Return JSON only.",true)
+  .then(function(r){
     var c=r.replace(/```json|```/g,"").trim();
-    var p=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));
-    S.candidates=p.candidates||[];S.step="pick";
-  }catch(e){S.error=e.message}
-  S.loading=false;render();
+    var si=c.indexOf("{"),ei=c.lastIndexOf("}")+1;
+    if(si<0||ei<=si)throw new Error("No JSON found in response: "+c.substring(0,200));
+    var p=JSON.parse(c.slice(si,ei));
+    S.candidates=p.candidates||[];
+    if(S.candidates.length===0)throw new Error("No candidates returned");
+    S.step="pick";
+  })
+  .catch(function(e){S.error=e.message})
+  .finally(function(){S.loading=false;render()});
 }
 
-async function doGenerate(idx){
+function doGenerate(idx){
   var topic=S.candidates[idx];S.selected=topic;S.loading=true;
-  S.loadMsg="그루브웹 톤으로 칼럼 작성 중...\n도입부 → 인용구 3줄 → 반전 → 본론 → 비교표 → 결론\n(1-3분 소요)";S.error=null;render();
-  try{
-    var ws="You are a senior writer for 그루브웹. Write column in this exact marker structure:\n[TITLE] 제목\n[INTRO] 도입부\n[QUOTE1] 인용구1\n[QUOTE2] 인용구2\n[QUOTE3] 인용구3\n[TURN] 반전\n[SECTION] 소제목\n[BODY] 본문 (3-4 sections)\n[TABLE_START]\n[TABLE_HEADER] 구분|열1|열2\n[TABLE_ROW] 항목|내용1|내용2\n[TABLE_END]\n[CONCLUSION] 결론\n[END]\nRules: 경어체, 이모지 금지, 2000-3500자, ~라는 점입니다 패턴. 하단 소개 블록 생성 금지.";
-    var draft=await callAPI(ws,"주제:"+topic.title_ko+"\n앵글:"+topic.angle_ko+"\n카테고리:"+topic.category+"\n핵심:"+JSON.stringify(topic.key_data_points)+"\n\n마커 형식으로 칼럼 작성. web_search 활용.",true);
-    S.loadMsg="에디터 검수 중...";render();
-    var sc=82;
-    try{var er=await callAPI("Review 그루브웹 column. Check:경어체,이모지없음,구조,분량. Respond ONLY JSON no backticks:{\"score\":95,\"revised_draft\":\"수정본문\"}","Draft:\n"+draft,false);
-      var ec=er.replace(/```json|```/g,"").trim();var ep=JSON.parse(ec.slice(ec.indexOf("{"),ec.lastIndexOf("}")+1));
-      if(ep.revised_draft&&ep.revised_draft.length>500)draft=ep.revised_draft;sc=ep.score||82;
-    }catch(e){}
-    var res=toHtml(draft);S.html=res.html;S.title=res.title||topic.title_ko;S.score=sc;S.step="preview";
-  }catch(e){S.error=e.message}
-  S.loading=false;render();
+  S.loadMsg="\uADF8\uB8E8\uBE0C\uC6F9 \uD1A4\uC73C\uB85C \uCE7C\uB7FC \uC791\uC131 \uC911...\n\uB3C4\uC785\uBD80 \u2192 \uC778\uC6A9\uAD6C 3\uC904 \u2192 \uBC18\uC804 \u2192 \uBCF8\uB860 \u2192 \uBE44\uAD50\uD45C \u2192 \uACB0\uB860\n(1-3\uBD84 \uC18C\uC694)";S.error=null;render();
+  var ws="You are a senior content writer for a Korean web agency called GrooveWeb. Write a column article using these exact markers:\n[TITLE] Column title in Korean\n[INTRO] Opening paragraph that addresses reader misconceptions\n[QUOTE1] Common misconception quote 1\n[QUOTE2] Common misconception quote 2\n[QUOTE3] Common misconception quote 3\n[TURN] Turning point paragraph\n[SECTION] Section heading\n[BODY] Section body text\n(repeat SECTION and BODY 3-4 times)\n[TABLE_START]\n[TABLE_HEADER] Label|Column1|Column2\n[TABLE_ROW] Row1|Cell1|Cell2\n[TABLE_ROW] Row2|Cell1|Cell2\n[TABLE_ROW] Row3|Cell1|Cell2\n[TABLE_END]\n[CONCLUSION] Conclusion paragraph\n[END]\n\nRules: Write in formal Korean (합니다/습니다 style). No emojis ever. 2000-3500 characters. Use the pattern ~라는 점입니다 for endings. Include a GrooveWeb case study: 실제로 그루브웹에 ~를 요청했던 한 기업의 홈페이지를 보면. Do NOT generate a footer or company introduction block.";
+  callAPI(ws,"Topic: "+topic.title_ko+"\nAngle: "+topic.angle_ko+"\nCategory: "+topic.category+"\nKey data: "+JSON.stringify(topic.key_data_points)+"\n\nWrite the column using the marker format. You may use web_search for additional data.",true)
+  .then(function(draft){
+    S.loadMsg="\uC5D0\uB514\uD130 \uAC80\uC218 \uC911...";render();
+    return callAPI("You are an editor. Review this Korean column draft. Check: formal Korean style, no emojis, proper structure, 2000-3500 chars. Respond ONLY with JSON, no backticks: {\"score\":85,\"revised_draft\":\"full revised text with markers\"}","Draft:\n"+draft,false)
+    .then(function(er){
+      var sc=82;
+      try{
+        var ec=er.replace(/```json|```/g,"").trim();
+        var ep=JSON.parse(ec.slice(ec.indexOf("{"),ec.lastIndexOf("}")+1));
+        if(ep.revised_draft&&ep.revised_draft.length>500)draft=ep.revised_draft;
+        sc=ep.score||82;
+      }catch(e){}
+      return{draft:draft,score:sc};
+    })
+    .catch(function(){return{draft:draft,score:80}});
+  })
+  .then(function(result){
+    var res=toHtml(result.draft);
+    S.html=res.html;S.title=res.title||topic.title_ko;S.score=result.score;S.step="preview";
+  })
+  .catch(function(e){S.error=e.message})
+  .finally(function(){S.loading=false;render()});
 }
 
 function toHtml(raw){
@@ -118,19 +141,18 @@ function toHtml(raw){
   var hs='style="font-size:24px;letter-spacing:-1px;line-height:1.4"';
   for(var i=0;i<lines.length;i++){var l=lines[i].trim();if(!l)continue;
     if(l.startsWith("[TABLE_START]")){inT=true;tH=[];tR=[];continue}
-    if(l.startsWith("[TABLE_END]")){inT=false;var t='<table style="width:100%;border-collapse:collapse;margin:20px 0"><tr>';tH.forEach(function(h){t+='<th style="background-color:rgb(204,204,204);padding:10px 12px;font-size:14px;font-weight:bold;text-align:center;border:1px solid #ddd">'+h+'</th>'});t+='</tr>';tR.forEach(function(r){t+='<tr>';r.forEach(function(c,j){t+='<td style="padding:10px 12px;font-size:14px;text-align:left;border:1px solid #ddd">'+(j===0?'<strong>'+c+'</strong>':c)+'</td>'});t+='</tr>'});t+='</table>';parts.push(t);continue}
-    if(inT){if(l.startsWith("[TABLE_HEADER]"))tH=l.replace("[TABLE_HEADER]","").trim().split("|").map(function(s){return s.trim()});else if(l.startsWith("[TABLE_ROW]"))tR.push(l.replace("[TABLE_ROW]","").trim().split("|").map(function(s){return s.trim()}));continue}
-    if(l.startsWith("[TITLE]")){title=l.replace("[TITLE]","").trim();continue}
-    if(l.startsWith("[INTRO]"))parts.push('<p '+ps+'><strong style="font-size:16px">'+l.replace("[INTRO]","").trim()+'</strong></p>');
+    if(l.startsWith("[TABLE_END]")){inT=false;var t='<table style="width:100%;border-collapse:collapse;margin:20px 0"><tr>';for(var hi=0;hi<tH.length;hi++){t+='<th style="background-color:rgb(204,204,204);padding:10px 12px;font-size:14px;font-weight:bold;text-align:center;border:1px solid #ddd">'+tH[hi]+'</th>'}t+='</tr>';for(var ri=0;ri<tR.length;ri++){t+='<tr>';for(var ci=0;ci<tR[ri].length;ci++){t+='<td style="padding:10px 12px;font-size:14px;text-align:left;border:1px solid #ddd">'+(ci===0?'<strong>'+tR[ri][ci]+'</strong>':tR[ri][ci])+'</td>'}t+='</tr>'}t+='</table>';parts.push(t);continue}
+    if(inT){if(l.indexOf("[TABLE_HEADER]")===0)tH=l.replace("[TABLE_HEADER]","").trim().split("|").map(function(s){return s.trim()});else if(l.indexOf("[TABLE_ROW]")===0)tR.push(l.replace("[TABLE_ROW]","").trim().split("|").map(function(s){return s.trim()}));continue}
+    if(l.indexOf("[TITLE]")===0){title=l.replace("[TITLE]","").trim();continue}
+    if(l.indexOf("[INTRO]")===0)parts.push('<p '+ps+'><strong style="font-size:16px">'+l.replace("[INTRO]","").trim()+'</strong></p>');
     else if(l.match(/^\[QUOTE\d/)){var q=l.split("]").slice(1).join("]").trim();parts.push('<p '+ps+'>"'+q+'"</p>')}
-    else if(l.startsWith("[TURN]"))parts.push('<p '+ps+'>'+l.replace("[TURN]","").trim()+'</p>');
-    else if(l.startsWith("[SECTION]")){parts.push("<hr>");parts.push('<p '+hs+'><strong>'+l.replace("[SECTION]","").trim()+'</strong></p>')}
-    else if(l.startsWith("[BODY]"))parts.push('<p '+ps+'>'+l.replace("[BODY]","").trim()+'</p>');
-    else if(l.startsWith("[CONCLUSION]")){parts.push("<hr>");var ct=l.replace("[CONCLUSION]","").trim();parts.push('<p '+hs+'><strong>'+(ct.startsWith("결론")?"":"결론 : ")+title+'</strong></p>');var b=ct.replace(/^결론\s*[:：]\s*/,"").trim();if(b)parts.push('<p '+ps+'>'+b+'</p>')}
-    else if(l.startsWith("[END]"))break;
-    else if(l.length>0&&!l.startsWith("["))parts.push('<p '+ps+'>'+l+'</p>')}
-  var img="https://cdn.imweb.me/upload/S20240529026030d67eeda/73eb2fe2bb412.jpg";
-  return{html:'<p style="text-align:justify;letter-spacing:0px"><img src="'+img+'" style="width:100%"></p>\n'+parts.join("\n")+"\n"+FOOTER,title:title}
+    else if(l.indexOf("[TURN]")===0)parts.push('<p '+ps+'>'+l.replace("[TURN]","").trim()+'</p>');
+    else if(l.indexOf("[SECTION]")===0){parts.push("<hr>");parts.push('<p '+hs+'><strong>'+l.replace("[SECTION]","").trim()+'</strong></p>')}
+    else if(l.indexOf("[BODY]")===0)parts.push('<p '+ps+'>'+l.replace("[BODY]","").trim()+'</p>');
+    else if(l.indexOf("[CONCLUSION]")===0){parts.push("<hr>");var ct=l.replace("[CONCLUSION]","").trim();parts.push('<p '+hs+'><strong>'+(ct.indexOf("\uACB0\uB860")===0?"":"\uACB0\uB860 : ")+title+'</strong></p>');var b=ct.replace(/^\uACB0\uB860\s*[:\uFF1A]\s*/,"").trim();if(b)parts.push('<p '+ps+'>'+b+'</p>')}
+    else if(l.indexOf("[END]")===0)break;
+    else if(l.length>0&&l.indexOf("[")!==0)parts.push('<p '+ps+'>'+l+'</p>')}
+  return{html:'<p style="text-align:justify;letter-spacing:0px"><img src="https://cdn.imweb.me/upload/S20240529026030d67eeda/73eb2fe2bb412.jpg" style="width:100%"></p>\n'+parts.join("\n")+"\n"+FOOTER,title:title}
 }
 
 function dl(type){
@@ -151,39 +173,38 @@ function render(){
   dot.className="dot"+(S.loading?" on":S.step==="done"?" done":"");
   badge.textContent=S.loading?"WORKING...":S.step==="pick"?"CANDIDATES":S.step.toUpperCase();
   var h="";
-  if(S.error)h+='<div class="err">'+S.error+'<br><button onclick="S.error=null;render()" style="margin-top:8px;background:none;border:1px solid var(--rd);color:var(--rd);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px">닫기</button></div>';
+  if(S.error)h+='<div class="err">'+S.error+'<br><button onclick="S.error=null;render()" style="margin-top:8px;background:none;border:1px solid var(--rd);color:var(--rd);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px">\uB2EB\uAE30</button></div>';
   if(S.loading){h+='<div class="loading"><div class="spinner"></div><div class="load-text">'+S.loadMsg+'</div></div>';$.innerHTML=h;return}
-
   if(S.step==="home"){
-    h+='<div class="banner"><div class="icon">\u26A1</div><div class="title">GrooveBot</div><div class="sub">해외 SEO/UIUX 소스 스캔 \u2192<br>그루브웹 칼럼 자동 생성 \u2192 HTML 다운로드</div></div>';
-    h+='<button class="btn btn-p" onclick="doResearch()">리서치 시작</button>';
-    if(S.history.length){h+='<div class="label">최근 발행 ('+S.history.length+'건)</div><div class="card">';
+    h+='<div class="banner"><div class="icon">\u26A1</div><div class="title">GrooveBot</div><div class="sub">\uD574\uC678 SEO/UIUX \uC18C\uC2A4 \uC2A4\uCE94 \u2192<br>\uADF8\uB8E8\uBE0C\uC6F9 \uCE7C\uB7FC \uC790\uB3D9 \uC0DD\uC131 \u2192 HTML \uB2E4\uC6B4\uB85C\uB4DC</div></div>';
+    h+='<button class="btn btn-p" onclick="doResearch()">\uB9AC\uC11C\uCE58 \uC2DC\uC791</button>';
+    if(S.history.length){h+='<div class="label">\uCD5C\uADFC \uBC1C\uD589 ('+S.history.length+'\uAC74)</div><div class="card">';
       S.history.slice(0,5).forEach(function(x){h+='<div class="hist-item"><span style="font-size:13px;font-weight:500;flex:1;margin-right:12px">'+x.title+'</span><span style="font-size:11px;color:var(--mt);font-family:monospace">'+(x.date||"").slice(0,10)+'</span></div>'});h+='</div>'}
   }
   else if(S.step==="pick"){
-    h+='<div class="label">칼럼 후보 '+S.candidates.length+'개</div>';
+    h+='<div class="label">\uCE7C\uB7FC \uD6C4\uBCF4 '+S.candidates.length+'\uAC1C</div>';
     S.candidates.forEach(function(c,i){
       h+='<div class="card"><div class="card-head"><span class="rank">#'+(c.rank||i+1)+'</span><span class="score">Score '+(c.score||"\u2014")+'</span></div>';
       h+='<div class="card-body"><div class="card-title">'+(c.title_ko||"")+'</div>';
       h+='<div class="tags"><span class="tag cat">'+(CATS[c.category]||c.category)+'</span><span class="tag">'+(c.source||"")+'</span></div>';
       h+='<div class="angle">'+(c.angle_ko||"")+'</div></div>';
-      h+='<button class="sel-btn" onclick="doGenerate('+i+')">이 주제로 칼럼 생성 \u2192</button></div>'});
-    h+='<button class="btn btn-g" onclick="doResearch()" style="margin-top:8px">다시 리서치</button>'
+      h+='<button class="sel-btn" onclick="doGenerate('+i+')">\uC774 \uC8FC\uC81C\uB85C \uCE7C\uB7FC \uC0DD\uC131 \u2192</button></div>'});
+    h+='<button class="btn btn-g" onclick="doResearch()" style="margin-top:8px">\uB2E4\uC2DC \uB9AC\uC11C\uCE58</button>'
   }
   else if(S.step==="preview"){
-    h+='<div class="label">칼럼 시안</div><div class="card"><div class="card-body" style="padding-top:16px"><div class="card-title" style="font-size:17px">'+S.title+'</div>';
+    h+='<div class="label">\uCE7C\uB7FC \uC2DC\uC548</div><div class="card"><div class="card-body" style="padding-top:16px"><div class="card-title" style="font-size:17px">'+S.title+'</div>';
     h+='<div class="tags"><span class="tag cat">'+(CATS[S.selected?S.selected.category:""]||"")+'</span>';
-    h+='<span class="sc-badge '+(S.score>=85?"sc-hi":"sc-md")+'">검수 '+S.score+'점</span></div></div></div>';
+    h+='<span class="sc-badge '+(S.score>=85?"sc-hi":"sc-md")+'">\uAC80\uC218 '+S.score+'\uC810</span></div></div></div>';
     h+='<div class="preview-wrap">'+S.html+'</div>';
-    h+='<div class="bottom"><div class="btn-grp"><button class="btn btn-d" onclick="S.step=\'pick\';S.html=\'\';S.title=\'\';render()">반려</button>';
-    h+='<button class="btn btn-p" onclick="approve()">승인 \xB7 다운로드</button></div>';
-    h+='<button class="btn btn-g" onclick="dl(\'preview\')" style="margin-top:8px;padding:10px;font-size:12px">미리보기 HTML 다운로드</button></div>'
+    h+='<div class="bottom"><div class="btn-grp"><button class="btn btn-d" onclick="S.step=\'pick\';S.html=\'\';S.title=\'\';render()">\uBC18\uB824</button>';
+    h+='<button class="btn btn-p" onclick="approve()">\uC2B9\uC778 \xB7 \uB2E4\uC6B4\uB85C\uB4DC</button></div>';
+    h+='<button class="btn btn-g" onclick="dl(\'preview\')" style="margin-top:8px;padding:10px;font-size:12px">\uBBF8\uB9AC\uBCF4\uAE30 HTML \uB2E4\uC6B4\uB85C\uB4DC</button></div>'
   }
   else if(S.step==="done"){
-    h+='<div class="banner ok"><div class="icon">\u2705</div><div class="title">발행 완료</div><div class="sub">아임웹 HTML이 다운로드되었습니다</div></div>';
-    h+='<div class="card"><div class="howto"><strong style="font-size:13px;color:var(--dm)">아임웹 적용법</strong><br><br>1. 다운로드된 HTML 파일을 메모장으로 열기<br>2. 전체 선택 (Ctrl+A) \u2192 복사 (Ctrl+C)<br>3. 아임웹 \u2192 칼럼 글쓰기 \u2192 소스 버튼<br>4. 붙여넣기 \u2192 저장</div></div>';
-    h+='<div class="btn-grp" style="margin-top:12px"><button class="btn btn-g" onclick="dl(\'imweb\')">다시 다운로드</button>';
-    h+='<button class="btn btn-p" onclick="S.step=\'home\';S.candidates=[];S.html=\'\';S.title=\'\';S.selected=null;render()">새 칼럼 시작</button></div>'
+    h+='<div class="banner ok"><div class="icon">\u2705</div><div class="title">\uBC1C\uD589 \uC644\uB8CC</div><div class="sub">\uC544\uC784\uC6F9 HTML\uC774 \uB2E4\uC6B4\uB85C\uB4DC\uB418\uC5C8\uC2B5\uB2C8\uB2E4</div></div>';
+    h+='<div class="card"><div class="howto"><strong style="font-size:13px;color:var(--dm)">\uC544\uC784\uC6F9 \uC801\uC6A9\uBC95</strong><br><br>1. \uB2E4\uC6B4\uB85C\uB4DC\uB41C HTML \uD30C\uC77C\uC744 \uBA54\uBAA8\uC7A5\uC73C\uB85C \uC5F4\uAE30<br>2. \uC804\uCCB4 \uC120\uD0DD (Ctrl+A) \u2192 \uBCF5\uC0AC (Ctrl+C)<br>3. \uC544\uC784\uC6F9 \u2192 \uCE7C\uB7FC \uAE00\uC4F0\uAE30 \u2192 \uC18C\uC2A4 \uBC84\uD2BC<br>4. \uBD99\uC5EC\uB123\uAE30 \u2192 \uC800\uC7A5</div></div>';
+    h+='<div class="btn-grp" style="margin-top:12px"><button class="btn btn-g" onclick="dl(\'imweb\')">\uB2E4\uC2DC \uB2E4\uC6B4\uB85C\uB4DC</button>';
+    h+='<button class="btn btn-p" onclick="S.step=\'home\';S.candidates=[];S.html=\'\';S.title=\'\';S.selected=null;render()">\uC0C8 \uCE7C\uB7FC \uC2DC\uC791</button></div>'
   }
   $.innerHTML=h
 }
