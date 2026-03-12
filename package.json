@@ -6,12 +6,3 @@
     "nodemailer": "^6.9.0"
   }
 }
-```
-- Commit
-
-**4. index.html에 이메일 발송 코드 추가**
-- `index.html` → 연필 아이콘
-- `Ctrl+F`로 `dl("imweb")` 검색 — `approve` 함수 안에 있어
-- 그 줄을 이걸로 교체:
-```
-dl("imweb");fetch("/api/send-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:S.title,html:S.html})}).catch(function(){});
