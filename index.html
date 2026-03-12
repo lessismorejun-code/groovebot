@@ -165,7 +165,7 @@ function dl(type){
 function approve(){
   S.history.unshift({title:S.title,category:S.selected?S.selected.category:"",date:new Date().toISOString()});
   try{localStorage.setItem("gb-hist",JSON.stringify(S.history))}catch(e){}
-dl("imweb");fetch("/api/send-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:S.title,html:S.html})}).catch(function(){});
+dl("imweb");fetch("/api/send-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:S.title,html:S.html})}).then(function(r){return r.json()}).then(function(d){if(d.ok)alert("이메일 발송 완료!")}).catch(function(){});S.step="done";render()
 
 }
 
